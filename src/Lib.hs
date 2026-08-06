@@ -4,6 +4,7 @@ module Lib
     ( module Euterpea
     , defaultOctave
     , start
+    , basePitch
     , ftrans
     , hNote
     , hNotes
@@ -24,6 +25,9 @@ defaultOctave = 4
 
 start :: Music Pitch
 start = rest 0
+
+basePitch :: Pitch
+basePitch = (C, 1)
 
 ftrans :: Int -> Music Pitch -> Music Pitch
 ftrans = fmap . trans
