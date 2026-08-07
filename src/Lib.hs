@@ -11,6 +11,7 @@ module Lib
     , hNotes'
     , graceNote
     , par
+    , repeatN
     , addDur
     , addDurPar
     , playMusic
@@ -49,6 +50,11 @@ graceNote _ m = m
 
 par :: Foldable t => t (Music a) -> Music a
 par = foldl' (:=:) (rest 0)
+
+repeatN :: Music a -> Int -> Music a
+repeatN m n
+    | n <= 0 = rest 0
+    | otherwise = m :+: repeatN m (n-1)
 
 addDur :: Dur -> [Dur -> Music a] -> Music a
 addDur dur takes = line $ map (\t -> t dur) takes
