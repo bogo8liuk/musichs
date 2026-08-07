@@ -14,6 +14,8 @@ module Lib
     , repeatN
     , addDur
     , addDurPar
+    , chromaticScale
+    , chromaticScaleOf
     , playMusic
     , quietLineToList
 ) where
@@ -55,6 +57,21 @@ repeatN :: Music a -> Int -> Music a
 repeatN m n
     | n <= 0 = rest 0
     | otherwise = m :+: repeatN m (n-1)
+
+chromaticScale :: Music Pitch
+chromaticScale = line [c 4 qn, cs 4 qn, d 4 qn, ds 4 qn, e 4 qn, f 4 qn,
+    fs 4 qn, g 4 qn, gs 4 qn, a 4 qn, as 4 qn, b 4 qn]
+
+chromaticScaleOf :: Pitch -> Pitch -> Music Pitch
+chromaticScaleOf p1 p2 =
+    case compare absp1 absp2 of
+        LT -> line (map (note qn . pitch) [absp1..absp2])
+        EQ -> note qn p1
+        GT -> line (map (note qn . pitch) $ reverse [absp2..absp1])
+    where
+        absp1 = absPitch p1
+
+        absp2 = absPitch p2
 
 addDur :: Dur -> [Dur -> Music a] -> Music a
 addDur dur takes = line $ map (\t -> t dur) takes
