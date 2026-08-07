@@ -16,6 +16,7 @@ module Lib
     , addDurPar
     , chromaticScale
     , chromaticScaleOf
+    , scale
     , playMusic
     , quietLineToList
 ) where
@@ -62,6 +63,8 @@ chromaticScale :: Music Pitch
 chromaticScale = line [c 4 qn, cs 4 qn, d 4 qn, ds 4 qn, e 4 qn, f 4 qn,
     fs 4 qn, g 4 qn, gs 4 qn, a 4 qn, as 4 qn, b 4 qn]
 
+-- Sequential notes between p1 and p2, each distant one semitone and each with
+-- a duration of 1/4
 chromaticScaleOf :: Pitch -> Pitch -> Music Pitch
 chromaticScaleOf p1 p2 =
     case compare absp1 absp2 of
@@ -72,6 +75,19 @@ chromaticScaleOf p1 p2 =
         absp1 = absPitch p1
 
         absp2 = absPitch p2
+
+-- Given a Pitch p and a list of intervals, it creates a chromatic scale with
+-- the given intervals instead of taking one semitone.
+scale :: Pitch -> [Int] -> Music Pitch
+scale p intervals = line $ map (note qn . pitch) ps
+    where
+        ps = asc $ absp : intervals
+
+        asc [] = []
+        asc [x] = [x]
+        asc (x1 : x2 : xs) = x1 : asc (x1+x2 : xs)
+
+        absp = absPitch p
 
 addDur :: Dur -> [Dur -> Music a] -> Music a
 addDur dur takes = line $ map (\t -> t dur) takes
