@@ -27,6 +27,7 @@ library
   exposed-modules:
       BinksRum
       ChildSong6
+      FrereJacques
       Lib
       LoseYourself
       Rythm
