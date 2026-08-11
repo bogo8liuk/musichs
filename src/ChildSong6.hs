@@ -7,7 +7,7 @@ import Lib
 childSong6 :: Music Pitch
 childSong6 =
     let t = (dhn / qn) * (69 / 120)
-    in instrument ElectricGrandPiano (tempo t (bassLine :=: mainVoice))
+    in instrument RhodesPiano (tempo t (bassLine :=: mainVoice))
 
 b1 :: Music Pitch
 b1 = addDur dqn [b 3, fs 4, g 4, fs 4]
