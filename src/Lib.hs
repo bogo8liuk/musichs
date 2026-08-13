@@ -19,6 +19,7 @@ module Lib
     , scale
     , playMusic
     , quietLineToList
+    , trill
 ) where
 
 import Data.List(foldl')
@@ -102,6 +103,17 @@ the @Music@ structure.
 quietLineToList :: Music a -> [Music a]
 quietLineToList (n :+: ns) = n : quietLineToList ns
 quietLineToList m = [m]
+
+--Ornament that alternates rapidly between two pitches
+--NB: it is defined only on single notes
+trill :: Int -> Dur -> Music Pitch -> Music Pitch
+trill i d (Prim (Note d' p)) =
+    if d >= d'
+    then note d' p
+    else note d p :+: trill (-i) d (note (d' - d) (trans i p))
+trill i d (Modify (Tempo t) m) = tempo t (trill i (d * t) m)
+trill i d (Modify c m) = Modify c (trill i d m)
+trill _ _ m = m
 
 playMusic :: Music Pitch -> IO ()
 playMusic = playDev 2
