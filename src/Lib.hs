@@ -20,6 +20,11 @@ module Lib
     , playMusic
     , quietLineToList
     , trill
+    , trill'
+    , trilln
+    , trilln'
+    , roll
+    , rolln
 ) where
 
 import Data.List(foldl')
@@ -114,6 +119,26 @@ trill i d (Prim (Note d' p)) =
 trill i d (Modify (Tempo t) m) = tempo t (trill i (d * t) m)
 trill i d (Modify c m) = Modify c (trill i d m)
 trill _ _ m = m
+
+--Same of trill, but it starts from transposed note
+trill' :: Int -> Dur -> Music Pitch -> Music Pitch
+trill' i d m = trill (-i) d $ transpose i m
+
+--Same of trill, but rather than specifying a duration of the trill, it
+--specifies how many times it has to change note
+trilln :: Int -> Int -> Music Pitch -> Music Pitch
+trilln i n m = trill i (dur m / fromIntegral n) m
+
+--Same of trilln, but it starts from transposed note
+trilln' :: Int -> Int -> Music Pitch -> Music Pitch
+trilln' i n m = trilln (-i) n $ transpose i m
+
+--Special case of trill where note transposition is zero. Useful for percussion
+roll :: Dur -> Music Pitch -> Music Pitch
+roll = trill 0
+
+rolln :: Int -> Music Pitch -> Music Pitch
+rolln = trilln 0
 
 playMusic :: Music Pitch -> IO ()
 playMusic = playDev 2
