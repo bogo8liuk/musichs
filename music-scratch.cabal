@@ -32,6 +32,7 @@ library
       LoseYourself
       Rythm
       Scratch
+      StillDRE
       Test
   other-modules:
       Paths_music_scratch
