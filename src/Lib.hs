@@ -10,8 +10,11 @@ module Lib
     , hNotes
     , hNotes'
     , graceNote
+    , graceNote'
+    , graceNote''
     , par
     , repeatN
+    , repeatM
     , addDur
     , addDurPar
     , chromaticScale
@@ -57,6 +60,18 @@ graceNote n (Prim (Note dur pitch)) =
     note (dur / 8) (trans n pitch) :+: note (7 * dur /8) pitch
 graceNote _ m = m
 
+--General version of graceNote
+graceNote' :: Int -> Rational -> Music Pitch -> Music Pitch
+graceNote' n r (Prim (Note dur pitch)) =
+    note (r * dur) (trans n pitch) :+: note ((1 - r) * dur) pitch
+graceNote' _ _ m = m
+
+graceNote'' :: Int -> Rational -> Music Pitch -> Music Pitch -> Music Pitch
+graceNote'' n r (Prim (Note dur pitch)) (Prim (Note dur' pitch')) =
+    note (dur - r * dur') pitch :+: note (r * dur') (trans n pitch') :+:
+    note dur' pitch'
+graceNote'' _ _ m1 m2 = m1 :+: m2
+
 par :: Foldable t => t (Music a) -> Music a
 par = foldl' (:=:) (rest 0)
 
@@ -64,6 +79,9 @@ repeatN :: Music a -> Int -> Music a
 repeatN m n
     | n <= 0 = rest 0
     | otherwise = m :+: repeatN m (n-1)
+
+repeatM :: Music a -> Music a
+repeatM m = m :+: repeatM m
 
 chromaticScale :: Music Pitch
 chromaticScale = line [c 4 qn, cs 4 qn, d 4 qn, ds 4 qn, e 4 qn, f 4 qn,
