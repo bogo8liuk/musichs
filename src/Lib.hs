@@ -13,6 +13,8 @@ module Lib
     , graceNote'
     , graceNote''
     , par
+    , parWait
+    , parFrom
     , repeatN
     , repeatM
     , addDur
@@ -74,6 +76,30 @@ graceNote'' _ _ m1 m2 = m1 :+: m2
 
 par :: Foldable t => t (Music a) -> Music a
 par = foldl' (:=:) (rest 0)
+
+--Like :=:, but instead of making the two pieces of music start at the same time,
+-- it waits for the longest to consume until it has the same time of the other
+-- one
+parWait :: Music a -> Music a -> Music a
+parWait m1 m2 =
+    if d1 >= d2
+    then cut (d1 - d2) m1 :+: (remove (d1 - d2) m1 :=: m2)
+    else cut (d2 - d1) m2 :+: (remove (d2 - d1) m1 :=: m2)
+    where
+        d1 = dur m1
+
+        d2 = dur m2
+
+--Like :=:, but the parallel playing starts after a certain duration. If that
+-- duration is longer than the first piece of music, then a rest is inserted
+-- before playing the second piece of music
+parFrom :: Dur -> Music a -> Music a -> Music a
+parFrom d m1 m2 =
+    if d > d1
+    then m1 :+: rest (d - d1) :+: m2
+    else cut d m1 :+: (remove d m1 :=: m2)
+    where
+        d1 = dur m1
 
 repeatN :: Music a -> Int -> Music a
 repeatN m n
