@@ -186,6 +186,8 @@ roll = trill 0
 rolln :: Int -> Music Pitch -> Music Pitch
 rolln = trilln 0
 
+--Useful to create, given a music m and an int n, this type of composition:
+-- g(f(m)) :=: g(f(f(m))) :=: g(f(f(f(m)))) :=: ... :=: g(f(f(..fn..(m)))) :=: g(rest 0)
 rep :: (Music a -> Music a) -> (Music a -> Music a) -> Int -> Music a -> Music a
 rep f g 0 m = rest 0
 rep f g n m = m :=: g (rep f g (n - 1) $ f m)
