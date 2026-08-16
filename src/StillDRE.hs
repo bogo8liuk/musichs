@@ -7,12 +7,35 @@ import Lib
 stillDRE :: Music Pitch
 stillDRE = cut 16 $ tempo (93/120) (parFrom 3 melody drums)
   where
-    drums = line [
-      rest beginDur,
-      times 5 enr,
-      times 3 (perc ClosedHiHat en),
-      times 16 $ roll en $ perc ClosedHiHat 2
-     ]
+    drums = rest beginDur :+: chord [drums1, drums2] --, drums3]
+
+    drums1 = line
+      [ times 5 enr
+      , times 3 (perc ClosedHiHat en)
+      , times 16 $ roll en $ perc ClosedHiHat 2
+      ]
+
+    drums2 = line
+      [ times 6 enr
+      , drums2Hit en
+      , enr
+      , times 16 drums2Loop
+      ]
+
+    drums3 = line
+      [ wnr
+      , times 16 drums3Loop
+      ]
+
+    drums2Loop = line [enr, enr, drums2Hit sn, snr, enr, enr, enr, drums2Hit en,
+      enr]
+
+    drums2Hit = perc ElectricSnare
+
+    drums3Loop = line [drums3Hit en, enr, snr, drums3Hit en, snr, drums3Hit en,
+      enr, enr, enr]
+
+    drums3Hit = perc LowFloorTom
 
     melody = cut 200 (mainMel :=: bassClefMel)
 
