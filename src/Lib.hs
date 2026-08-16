@@ -30,6 +30,8 @@ module Lib
     , trilln'
     , roll
     , rolln
+    , rep
+    , delayM
 ) where
 
 import Data.List(foldl')
@@ -183,6 +185,13 @@ roll = trill 0
 
 rolln :: Int -> Music Pitch -> Music Pitch
 rolln = trilln 0
+
+rep :: (Music a -> Music a) -> (Music a -> Music a) -> Int -> Music a -> Music a
+rep f g 0 m = rest 0
+rep f g n m = m :=: g (rep f g (n - 1) $ f m)
+
+delayM :: Dur -> Music a -> Music a
+delayM d m = rest d :+: m
 
 playMusic :: Music Pitch -> IO ()
 playMusic = playDev 2
