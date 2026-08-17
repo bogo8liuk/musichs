@@ -2,7 +2,6 @@ module SomeBeats
   ( beat1
   , beat2
   , synthWinter
-  , winterBeat
 ) where
 
 import Lib
@@ -35,4 +34,8 @@ t251 =
     in dMinor :+: gMajor :+: cMajor
 
 synthWinter :: Music Pitch
-synthWinter = cut 16 $ tempo (146/120) trapDrums :=: instrument SynthBrass2 (repeatM winter)
+synthWinter = cut 16 $ drums :=: melody
+  where
+    melody = phrase [Dyn $ StdLoudness P] $ instrument SynthBrass2 (repeatM winter)
+
+    drums = phrase [Dyn $ StdLoudness FFF] $ tempo (146/120) trapDrums 
