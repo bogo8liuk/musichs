@@ -35,6 +35,7 @@ library
       SomeBeats
       StillDRE
       Test
+      Vivaldi
   other-modules:
       Paths_music_scratch
   autogen-modules:
