@@ -1,10 +1,12 @@
 module SomeBeats
   ( beat1
   , beat2
+  , synthWinter
 ) where
 
 import Lib
 import Rythm
+import Vivaldi
 
 beat1 :: Music Pitch
 beat1 = cut 16 beat
@@ -30,3 +32,6 @@ t251 =
         gMajor = g 4 wn :=: b 4 wn :=: d 5 wn
         cMajor = c 4 bn :=: e 4 bn :=: g 4 bn
     in dMinor :+: gMajor :+: cMajor
+
+synthWinter :: Music Pitch
+synthWinter = cut 16 $ trapDrums :=: instrument SynthBrass2 (repeatM winter)
