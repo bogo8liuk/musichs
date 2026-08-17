@@ -23,6 +23,8 @@ trapDrums = repeatM drums
     drums = line [times 3 hit, snr, hit, snr, times 5 hit, snr, times 2 hit,
       times 4 hhit]
 
-    hit = perc ClosedHiHat sn
+    hit = perc percussion sn
 
-    hhit = perc ClosedHiHat tn
+    hhit = perc percussion tn
+
+    percussion = ClosedHiHat

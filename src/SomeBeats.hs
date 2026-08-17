@@ -2,6 +2,7 @@ module SomeBeats
   ( beat1
   , beat2
   , synthWinter
+  , winterBeat
 ) where
 
 import Lib
@@ -34,4 +35,4 @@ t251 =
     in dMinor :+: gMajor :+: cMajor
 
 synthWinter :: Music Pitch
-synthWinter = cut 16 $ trapDrums :=: instrument SynthBrass2 (repeatM winter)
+synthWinter = cut 16 $ tempo (146/120) trapDrums :=: instrument SynthBrass2 (repeatM winter)
