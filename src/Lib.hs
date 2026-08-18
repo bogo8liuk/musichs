@@ -32,6 +32,7 @@ module Lib
     , rolln
     , rep
     , delayM
+    , transAndScaleDur
 ) where
 
 import Data.List(foldl')
@@ -194,6 +195,11 @@ rep f g n m = m :=: g (rep f g (n - 1) $ f m)
 
 delayM :: Dur -> Music a -> Music a
 delayM d m = rest d :+: m
+
+--For self-similar music. Given a music m and an int n, it transposes m of n
+-- pitches and stretches the duration of m by a factor of 2^n.
+transAndScaleDur :: Int -> Music a -> Music a
+transAndScaleDur n m = scaleDurations (2^n) $ transpose n m
 
 playMusic :: Music Pitch -> IO ()
 playMusic = playDev 2
