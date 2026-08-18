@@ -3,15 +3,14 @@ module Einaudi
   , violin1Experience
   , violin2Experience
   , violaExperience
+  , celloExperience
 ) where
 
 import Lib
 
 experience :: Music Pitch
 experience = tempo experienceTempo $ chord [violin1Experience,
-  violin2Experience, violaExperience]--, vln2, vla, cello]
-  where
-    cello = undefined
+  violin2Experience, violaExperience, celloExperience]
 
 --s in g,f,c
 violin1Experience :: Music Pitch
@@ -75,11 +74,26 @@ violaExperience = tempo experienceTempo $ instrument Viola $ line [q1, q2, q3,
 
 --s on g,f,c
 celloExperience :: Music Pitch
-celloExperience = tempo experienceTempo $ instrument Cello $ undefined
+celloExperience = tempo experienceTempo $ instrument Cello $ line [q1, q2, q3,
+  q4, q5, q6, q7, q8]
   where
     q1 = phrase [Dyn $ StdLoudness PP] m1
+    q2 = phrase [Dyn $ StdLoudness PP] m2
+    q3 = phrase [Dyn $ StdLoudness PP] m3
+    q4 = phrase [Dyn $ StdLoudness PP] m4
+    q5 = phrase [Dyn $ StdLoudness P] m5
+    q6 = phrase [Dyn $ StdLoudness P] m6
+    q7 = phrase [Dyn $ StdLoudness P] m7
+    q8 = phrase [Dyn $ StdLoudness P] m8
 
     m1 = addDurPar wn [fs 3, fs 2]
+    m2 = addDurPar wn [a 3, a 3]
+    m3 = addDurPar wn [cs 3, cs 2]
+    m4 = addDurPar wn [d 3, d 2]
+    m5 = addDurPar wn [cs 3, fs 3]
+    m6 = addDurPar wn [e 3, a 2]
+    m7 = addDurPar wn [cs 3, a 2]
+    m8 = addDurPar wn [fs 3, d 3]
 
 experienceTempo :: Dur
 experienceTempo = 92/120
