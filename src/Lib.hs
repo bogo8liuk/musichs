@@ -33,6 +33,8 @@ module Lib
     , rep
     , delayM
     , transAndScaleDur
+    , SimpleNote
+    , ss
 ) where
 
 import Data.List(foldl')
@@ -196,10 +198,55 @@ rep f g n m = m :=: g (rep f g (n - 1) $ f m)
 delayM :: Dur -> Music a -> Music a
 delayM d m = rest d :+: m
 
+{------------ Self-similar Music --------------}
+
 --For self-similar music. Given a music m and an int n, it transposes m of n
 -- pitches and stretches the duration of m by a factor of 2^n.
 transAndScaleDur :: Int -> Music a -> Music a
 transAndScaleDur n m = scaleDurations (2^n) $ transpose n m
+
+data SelfSimilarTree = SSTree SimpleNote [SelfSimilarTree] deriving Show
+type SimpleNote = (Dur, AbsPitch) --work with absolute pitches, than transform it back
+
+{-
+It builds this tree:
+
+   a1 b2 c3 d4
+
+a1-a1  a1-b2  a1-c3  a1-d4  b2-a1  b2-b2 ... d4-c3  d4-d4
+
+a1-a1a1  a1-a1b2  a1-a1c3 ... a1-d4d4 ... c3-a1a1  c3-a1b2  ... d4-d4d4
+
+... b2-c3b2d4 ...
+
+...
+-}
+selfSimilar :: [SimpleNote] -> SelfSimilarTree
+selfSimilar ns = SSTree (0, 0) $ map mkTree ns
+    where
+        mkTree n = SSTree n $ map (mkTree . addMult n) ns
+
+        addMult :: SimpleNote -> SimpleNote -> SimpleNote
+        addMult (d0, p0) (d1, p1) = (d0 * d1, p0 + p1)
+
+cutSelfSimilarAt :: Int -> SelfSimilarTree -> [SimpleNote]
+cutSelfSimilarAt 0 (SSTree sn _) = [sn]
+cutSelfSimilarAt n (SSTree sn ts) = concatMap (cutSelfSimilarAt (n-1)) ts
+
+simpleNotesToMusic :: [SimpleNote] -> Music Pitch
+simpleNotesToMusic = line . map simpleNoteToMusic
+
+simpleNoteToMusic :: SimpleNote -> Music Pitch
+simpleNoteToMusic (d, absp) = note d $ pitch absp
+
+--This is literally magic: a starting expression could be:
+-- instrument Vibraphone $ ss [(1, 2), (1, 0), (1, 5), (1, 7)] 4 40 20
+-- ss [(1,8), (2,3), (4, 2), (1,7)] 4 40 50
+ss :: [SimpleNote] -> Int -> AbsPitch -> Dur -> Music Pitch
+ss ns n tr te = transpose tr $ tempo te $ simpleNotesToMusic $
+    cutSelfSimilarAt n $ selfSimilar ns
+
+{------------ End of Self-similar Music --------------}
 
 playMusic :: Music Pitch -> IO ()
 playMusic = playDev 2
