@@ -7,6 +7,7 @@ module Rythm
   , boomBapDrums1
   , accompanyingSnare2
   , boomBapDrums2
+  , trapDrums1
 ) where
 
 import Euterpea
@@ -62,3 +63,20 @@ accompanyingSnare2 = repeatM drums
     snareHit1 = perc ElectricSnare
 
     snareHit2 = perc HiMidTom
+
+trapDrums1 :: Music Pitch
+trapDrums1 = repeatM (drums1 :+: drums2)
+  where
+    drums1 = line [times 3 hit :=: snare1, snr, hit, snr,
+      times 5 hit :=: (enr :+: snare2), snr, times 2 hit, times 4 hhit]
+
+    drums2 = line [times 3 hit, snr, hit :=: snare1, snr,
+      times 5 hit :=: (enr :+: snare2), snr, times 2 hit, times 4 hhit]
+
+    hit = perc percussion sn
+    hhit = perc percussion tn
+
+    snare1 = perc LowTom sn
+    snare2 = perc ElectricSnare sn
+
+    percussion = ClosedHiHat
