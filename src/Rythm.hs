@@ -2,6 +2,7 @@ module Rythm
   ( basicDrums
   , accompanyingDrums
   , trapDrums
+  , boomBapDrums
 ) where
 
 import Euterpea
@@ -16,6 +17,9 @@ accompanyingDrums = repeatM drums
     drums = line [enr, enr, drumsHit sn, snr, enr, enr, enr, drumsHit en, enr]
 
     drumsHit = perc ElectricSnare
+
+boomBapDrums :: Music Pitch
+boomBapDrums = basicDrums :=: accompanyingDrums
 
 trapDrums :: Music Pitch
 trapDrums = repeatM drums
