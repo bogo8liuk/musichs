@@ -51,8 +51,8 @@ beat3_70bpm = tempo (70/120) $ cut 16 beat3Sample
 beat3Sample :: Music Pitch
 beat3Sample = repeatM (repeatM (times 3 m :=: h) :=: boomBapDrums)
   where
-    m = instrument AcousticGrandPiano $ phrase [Dyn $ StdLoudness MF] $ line [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,
-      m11,m12,m13,m14,m15,m16]
+    m = instrument AcousticGrandPiano $ phrase [Dyn $ StdLoudness MF] $
+      line [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16]
 
     m1 = addDurPar sn [e 3, g 3, d 4]
     m2 = addDurPar sn [e 3, gs 3, d 4]
