@@ -82,10 +82,10 @@ foliaBeat_4quarters = tempo (72/120) melody
       [ instrument FX6Goblins mainMelody
       , fx8MainMel SF
       , bassMelody :=: fx8MainMel MF
-      , bassMelody :=: fx8MainMel MF :=: cut 4 boomBapDrums1
-      , bassMelody :=: fx8MainMel MF :=: cut 4 boomBapDrums1
-      , bassMelody :=: fx8MainMel MF :=: (wnr :+: remove 1 (cut 4 boomBapDrums1))
-      , bassMelody :=: fx8MainMel MF :=: cut 4 boomBapDrums1
+      , bassMelody :=: fx8MainMel MF :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel MF :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel MF :=: silence 1 (cut 4 trapDrums1)
+      , bassMelody :=: fx8MainMel MF :=: cut 4 trapDrums1
       ]
 
     fx8MainMel l = phrase [Dyn $ StdLoudness l] $ instrument FX8SciFi mainMelody
