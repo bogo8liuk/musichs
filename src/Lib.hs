@@ -203,7 +203,9 @@ delayM d m = rest d :+: m
 --For self-similar music. Given a music m and an int n, it transposes m of n
 -- pitches and stretches the duration of m by a factor of 2^n.
 transAndScaleDur :: Int -> Music a -> Music a
-transAndScaleDur n m = scaleDurations (2^n) $ transpose n m
+transAndScaleDur n m
+    | n >= 0 = scaleDurations (2^n) $ transpose n m
+    | otherwise = scaleDurations (1/(2^(-n))) $ transpose n m
 
 data SelfSimilarTree = SSTree SimpleNote [SelfSimilarTree] deriving Show
 type SimpleNote = (Dur, AbsPitch) --work with absolute pitches, than transform it back
