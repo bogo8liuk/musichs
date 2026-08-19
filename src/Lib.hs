@@ -36,6 +36,7 @@ module Lib
     , SimpleNote
     , ss
     , transIncremental
+    , silence
 ) where
 
 import Data.List(foldl')
@@ -189,6 +190,9 @@ roll = trill 0
 
 rolln :: Int -> Music Pitch -> Music Pitch
 rolln = trilln 0
+
+silence :: Dur -> Music a -> Music a
+silence d m = rest d :+: remove d m
 
 --Useful to create, given a music m and an int n, this type of composition:
 -- g(f(m)) :=: g(f(f(m))) :=: g(f(f(f(m)))) :=: ... :=: g(f(f(..fn..(m)))) :=: g(rest 0)
