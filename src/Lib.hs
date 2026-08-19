@@ -35,6 +35,7 @@ module Lib
     , transAndScaleDur
     , SimpleNote
     , ss
+    , transIncremental
 ) where
 
 import Data.List(foldl')
@@ -206,6 +207,14 @@ transAndScaleDur :: Int -> Music a -> Music a
 transAndScaleDur n m
     | n >= 0 = scaleDurations (2^n) $ transpose n m
     | otherwise = scaleDurations (1/(2^(-n))) $ transpose n m
+
+transIncremental :: Music a -> Music a
+transIncremental m = incr 0 m
+    where
+        incr n (m1 :+: m2) = transpose n m1 :+: incr (n+1) m2
+        incr n (Modify c m) = Modify c $ incr n m
+        incr n m@(Prim _) = transpose n m
+        incr n m@(_ :=: _) = transpose n m
 
 data SelfSimilarTree = SSTree SimpleNote [SelfSimilarTree] deriving Show
 type SimpleNote = (Dur, AbsPitch) --work with absolute pitches, than transform it back
