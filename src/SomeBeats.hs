@@ -4,6 +4,7 @@ module SomeBeats
   , synthWinter
   , beat3_70bpm
   , beat3_92bpm
+  , foliaBeat_4quarters
 ) where
 
 import Lib
@@ -13,12 +14,12 @@ import Vivaldi
 beat1 :: Music Pitch
 beat1 = cut 16 beat
   where
-    beat = instrument HammondOrgan $ repeatM t251 :=: (basicDrums :=: accompanyingDrums)
+    beat = instrument HammondOrgan $ repeatM t251 :=: boomBapDrums
 
 beat2 :: Music Pitch
 beat2 = cut 16 $ melody :=: beat1
   where
-    melody = repeatM $ instrument Xylophone $ line [wnr, n1, n2, n3, n4]
+    melody = repeatM $ instrument Xylophone $ line [hnr, n1, n2, n3, n4]
 
     n1 = chord [f 5 en, d 5 en, g 4 en]
 
@@ -73,3 +74,28 @@ beat3Sample = repeatM (repeatM (times 3 m :=: h) :=: boomBapDrums)
 
     h = instrument OrchestraHit $ phrase [Dyn $ StdLoudness FFF] $ line [rest (bn + wn), b 3 en,
       hnr, f 3 en, enr, g 3 en]
+
+foliaBeat_4quarters :: Music Pitch
+foliaBeat_4quarters = tempo (72/120) melody
+  where
+    melody = line
+      [ instrument FX6Goblins mainMelody
+      , fx8MainMel SF
+      , bassMelody :=: fx8MainMel MF
+      , bassMelody :=: fx8MainMel MF :=: cut 4 boomBapDrums1
+      , bassMelody :=: fx8MainMel MF :=: cut 4 boomBapDrums1
+      , bassMelody :=: fx8MainMel MF :=: (wnr :+: remove 1 (cut 4 boomBapDrums1))
+      , bassMelody :=: fx8MainMel MF :=: cut 4 boomBapDrums1
+      ]
+
+    fx8MainMel l = phrase [Dyn $ StdLoudness l] $ instrument FX8SciFi mainMelody
+
+    --b on b
+    mainMelody = line [q1, q2, q3, q4]
+
+    q1 = addDur en [d 5, f 5, a 5, f 5, d 5, f 5, a 5, f 5]
+    q2 = addDur en [cs 5, e 5, a 5, e 5, cs 5, e 5, a 5, e 5]
+    q3 = q1
+    q4 = addDur en [e 5, g 5, bf 5, g 5, e 5, g 5, bf 5, g 5]
+
+    bassMelody = instrument FX7Echoes $ addDur wn [g 2, a 2, bf 2, c 3]
