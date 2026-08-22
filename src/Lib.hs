@@ -37,6 +37,8 @@ module Lib
     , ss
     , transIncremental
     , silence
+    , insert
+    , throttle
 ) where
 
 import Data.List(foldl')
@@ -190,6 +192,28 @@ roll = trill 0
 
 rolln :: Int -> Music Pitch -> Music Pitch
 rolln = trilln 0
+
+--`insert n m1 m2` inserts m1 inside m2 so the number of times m1 and m2
+--alternates is equal to n (m2 is cut at the points m1 is inserted).
+insert :: Int -> Music Pitch -> Music Pitch -> Music Pitch
+insert n m1 m2 =
+    if n <= 0
+    then m2
+    else insert' n m2 False
+    where
+        d2 = dur m2
+        pieceDur = d2 / fromIntegral n
+        realM1 = cut pieceDur m1
+
+        insert' 0 m _ = m
+        insert' n m True = cut pieceDur m :+: insert' (n-1) (remove pieceDur m) False
+        insert' n m False = realM1 :+: insert' (n-1) (remove pieceDur m) True
+
+--special case of insert where the music to be inserted is a rest
+throttle :: Int -> Music Pitch -> Music Pitch
+throttle n m = insert n (rest restDur) m
+    where
+        restDur = dur m --to ensure the rest is long enough
 
 silence :: Dur -> Music a -> Music a
 silence d m = rest d :+: remove d m
