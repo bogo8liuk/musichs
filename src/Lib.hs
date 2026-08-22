@@ -39,6 +39,7 @@ module Lib
     , silence
     , insert
     , throttle
+    , divideNotes
 ) where
 
 import Data.List(foldl')
@@ -195,7 +196,7 @@ rolln = trilln 0
 
 --`insert n m1 m2` inserts m1 inside m2 so the number of times m1 and m2
 --alternates is equal to n (m2 is cut at the points m1 is inserted).
-insert :: Int -> Music Pitch -> Music Pitch -> Music Pitch
+insert :: Int -> Music a -> Music a -> Music a
 insert n m1 m2 =
     if n <= 0
     then m2
@@ -210,10 +211,29 @@ insert n m1 m2 =
         insert' n m False = realM1 :+: insert' (n-1) (remove pieceDur m) True
 
 --special case of insert where the music to be inserted is a rest
-throttle :: Int -> Music Pitch -> Music Pitch
+throttle :: Int -> Music a -> Music a
 throttle n m = insert n (rest restDur) m
     where
         restDur = dur m --to ensure the rest is long enough
+
+--It divides notes into n parts. Between each notes, it adds a rest of 1/64 to
+-- make it effective. If the duration of a note is lesser than the sum of these
+-- pauses inside its split, then the note is not touched.
+divideNotes :: Int -> Music a -> Music a
+divideNotes n m
+    | n <= 0 = m
+    | otherwise =
+        case m of
+            (Prim (Note d p)) ->
+                if sfn * fromIntegral n >= d
+                then m
+                else
+                    let newDur = (d/fromIntegral n) - sfn in
+                    times n (Prim (Note newDur p) :+: rest sfn)
+            (Modify c m) -> Modify c $ divideNotes n m
+            (m1 :+: m2) -> divideNotes n m1 :+: divideNotes n m2
+            (m1 :=: m2) -> divideNotes n m1 :=: divideNotes n m2
+            _ -> m
 
 silence :: Dur -> Music a -> Music a
 silence d m = rest d :+: remove d m
