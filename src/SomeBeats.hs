@@ -81,17 +81,25 @@ foliaBeat_4quarters = tempo (72/120) melody
     melody = line
       [ instrument FX6Goblins mainMelody
       , fx8MainMel SF
-      , bassMelody :=: fx8MainMel MF
-      , bassMelody :=: fx8MainMel MF :=: cut 4 trapDrums1
-      , bassMelody :=: fx8MainMel MF :=: cut 4 trapDrums1
-      , bassMelody :=: fx8MainMel MF :=: silence 1 (cut 4 trapDrums1)
-      , bassMelody :=: fx8MainMel MF :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel mainDefLoudness
+      , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel mainDefLoudness :=: silence 1 (cut 4 trapDrums1)
+      , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
+      , bassMelody :=: cutMainMel :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
+      , throttledMainMel mainDefLoudness :=: cut 4 trapDrums1
       ]
 
     fx8MainMel l = phrase [Dyn $ StdLoudness l] $ instrument FX8SciFi mainMelody
+    cutMainMel = insertCut 16 $ fx8MainMel mainDefLoudness
+    throttledMainMel l = phrase [Dyn $ StdLoudness l] $ instrument Lead2Sawtooth divMainMelody
+
+    mainDefLoudness = MF
 
     --b on b
     mainMelody = line [q1, q2, q3, q4]
+    divMainMelody = line $ zipWith throttle [1,2,3,4] [q1, q2, q3, q4]
 
     q1 = addDur en [d 5, f 5, a 5, f 5, d 5, f 5, a 5, f 5]
     q2 = addDur en [cs 5, e 5, a 5, e 5, cs 5, e 5, a 5, e 5]

@@ -38,8 +38,8 @@ module Lib
     , transIncremental
     , silence
     , insert
+    , insertCut
     , throttle
-    , divideNotes
 ) where
 
 import Data.List(foldl')
@@ -211,16 +211,16 @@ insert n m1 m2 =
         insert' n m False = realM1 :+: insert' (n-1) (remove pieceDur m) True
 
 --special case of insert where the music to be inserted is a rest
-throttle :: Int -> Music a -> Music a
-throttle n m = insert n (rest restDur) m
+insertCut :: Int -> Music a -> Music a
+insertCut n m = insert n (rest restDur) m
     where
         restDur = dur m --to ensure the rest is long enough
 
 --It divides notes into n parts. Between each notes, it adds a rest of 1/64 to
 -- make it effective. If the duration of a note is lesser than the sum of these
 -- pauses inside its split, then the note is not touched.
-divideNotes :: Int -> Music a -> Music a
-divideNotes n m
+throttle :: Int -> Music a -> Music a
+throttle n m
     | n <= 0 = m
     | otherwise =
         case m of
@@ -230,9 +230,9 @@ divideNotes n m
                 else
                     let newDur = (d/fromIntegral n) - sfn in
                     times n (Prim (Note newDur p) :+: rest sfn)
-            (Modify c m) -> Modify c $ divideNotes n m
-            (m1 :+: m2) -> divideNotes n m1 :+: divideNotes n m2
-            (m1 :=: m2) -> divideNotes n m1 :=: divideNotes n m2
+            (Modify c m) -> Modify c $ throttle n m
+            (m1 :+: m2) -> throttle n m1 :+: throttle n m2
+            (m1 :=: m2) -> throttle n m1 :=: throttle n m2
             _ -> m
 
 silence :: Dur -> Music a -> Music a
