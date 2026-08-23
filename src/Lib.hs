@@ -44,6 +44,7 @@ module Lib
     , circleThrottle
     , negCircle
     , negCircleThrottle
+    , loud
 ) where
 
 import Data.List(foldl')
@@ -283,6 +284,9 @@ rep f g n m = m :=: g (rep f g (n - 1) $ f m)
 
 delayM :: Dur -> Music a -> Music a
 delayM d m = rest d :+: m
+
+loud :: StdLoudness -> Music a -> Music a
+loud ld = phrase [Dyn $ StdLoudness ld]
 
 {------------ Self-similar Music --------------}
 
