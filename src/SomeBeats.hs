@@ -76,7 +76,7 @@ beat3Sample = repeatM (repeatM (times 3 m :=: h) :=: boomBapDrums)
       hnr, f 3 en, enr, g 3 en]
 
 foliaBeat_4quarters :: Music Pitch
-foliaBeat_4quarters = tempo (72/120) melody
+foliaBeat_4quarters = tempo (90/120) melody
   where
     melody = line
       [ instrument FX6Goblins mainMelody
@@ -89,17 +89,23 @@ foliaBeat_4quarters = tempo (72/120) melody
       , bassMelody :=: cutMainMel :=: cut 4 trapDrums1
       , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
       , throttledMainMel mainDefLoudness :=: cut 4 trapDrums1
+      , circleThrottledMainMel mainDefLoudness :=: cut 4 trapDrums1
+      , bassMelody :=: lead2MainMel mainDefLoudness :=: cut 4 trapDrums1
+      , bassMelody :=: lead2MainMel mainDefLoudness :=: cut 4 trapDrums1
       ]
 
     fx8MainMel l = phrase [Dyn $ StdLoudness l] $ instrument FX8SciFi mainMelody
     cutMainMel = insertCut 16 $ fx8MainMel mainDefLoudness
     throttledMainMel l = phrase [Dyn $ StdLoudness l] $ instrument Lead2Sawtooth divMainMelody
+    circleThrottledMainMel l = phrase [Dyn $ StdLoudness l] $ instrument Lead2Sawtooth circleDivMainMelody
+    lead2MainMel l = phrase [Dyn $ StdLoudness l] $ instrument Lead2Sawtooth mainMelody
 
     mainDefLoudness = MF
 
     --b on b
     mainMelody = line [q1, q2, q3, q4]
     divMainMelody = line $ zipWith throttle [1,2,3,4] [q1, q2, q3, q4]
+    circleDivMainMelody = line $ zipWith circleThrottle [3,3,4,4] [q1, q2, q3, q4]
 
     q1 = addDur en [d 5, f 5, a 5, f 5, d 5, f 5, a 5, f 5]
     q2 = addDur en [cs 5, e 5, a 5, e 5, cs 5, e 5, a 5, e 5]
