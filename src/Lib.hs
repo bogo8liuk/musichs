@@ -40,6 +40,8 @@ module Lib
     , insert
     , insertCut
     , throttle
+    , circle
+    , circleThrottle
 ) where
 
 import Data.List(foldl')
@@ -234,6 +236,34 @@ throttle n m
             (m1 :+: m2) -> throttle n m1 :+: throttle n m2
             (m1 :=: m2) -> throttle n m1 :=: throttle n m2
             _ -> m
+
+circleThrottle :: Int -> Music a -> Music a
+circleThrottle n m
+    | n <= 0 = m
+    | otherwise =
+        case m of
+            (Prim (Note d p)) ->
+                if sfn * fromIntegral n >= d
+                then m
+                else
+                    let newDur = (d/fromIntegral n) - sfn in
+                    circle n (Prim (Note newDur p)) :+: rest sfn
+            (Modify c m) -> Modify c $ circleThrottle n m
+            (m1 :+: m2) -> circleThrottle n m1 :+: circleThrottle n m2
+            (m1 :=: m2) -> circleThrottle n m1 :=: circleThrottle n m2
+            _ -> m
+
+circle :: Int -> Music a -> Music a
+circle n m
+    | n <= 1 = m
+    | n == 2 = m :+: m
+    | otherwise =
+        let lvs = if even n
+            then [0..(half-1)] ++ reverse [0..(half-1)]
+            else [0..half] ++ reverse [0..(half-1)]
+        in line $ map (`transpose` m) lvs
+    where
+        half = n `div` 2
 
 silence :: Dur -> Music a -> Music a
 silence d m = rest d :+: remove d m
