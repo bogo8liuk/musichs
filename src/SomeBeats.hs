@@ -85,20 +85,20 @@ foliaBeat_4quarters = tempo (90/120) melody
       , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
       , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
       , bassMelody :=: fx8MainMel mainDefLoudness :=: silence 1 (cut 4 trapDrums1)
-      , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
       , bassMelody :=: cutMainMel :=: cut 4 trapDrums1
-      , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel mainDefLoudness :=: attachingLead2Mel SF :=: cut 4 trapDrums1
       , throttledMainMel mainDefLoudness :=: cut 4 trapDrums1
       , circleThrottledMainMel mainDefLoudness :=: cut 4 trapDrums1
       , bassMelody :=: lead2MainMel mainDefLoudness :=: cut 4 trapDrums1
       , bassMelody :=: lead2MainMel mainDefLoudness :=: cut 4 trapDrums1
       ]
 
-    fx8MainMel l = phrase [Dyn $ StdLoudness l] $ instrument FX8SciFi mainMelody
+    fx8MainMel l = loud l $ instrument FX8SciFi mainMelody
     cutMainMel = insertCut 16 $ fx8MainMel mainDefLoudness
-    throttledMainMel l = phrase [Dyn $ StdLoudness l] $ instrument Lead2Sawtooth divMainMelody
-    circleThrottledMainMel l = phrase [Dyn $ StdLoudness l] $ instrument Lead2Sawtooth circleDivMainMelody
-    lead2MainMel l = phrase [Dyn $ StdLoudness l] $ instrument Lead2Sawtooth mainMelody
+    throttledMainMel l = loud l $ instrument Lead2Sawtooth divMainMelody
+    circleThrottledMainMel l = loud l $ instrument Lead2Sawtooth circleDivMainMelody
+    lead2MainMel l = loud l $ instrument Lead2Sawtooth mainMelody
+    attachingLead2Mel l = loud l $ instrument Lead2Sawtooth attachingMelody
 
     mainDefLoudness = MF
 
@@ -113,3 +113,10 @@ foliaBeat_4quarters = tempo (90/120) melody
     q4 = addDur en [e 5, g 5, bf 5, g 5, e 5, g 5, bf 5, g 5]
 
     bassMelody = instrument FX7Echoes $ addDur wn [g 2, a 2, bf 2, c 3]
+
+    attachingMelody = line [aq1, aq2, aq3, aq4]
+
+    aq1 = addDur en [rest, rest, cs 5, rest, rest, rest, cs 5, rest]
+    aq2 = addDur en [rest, rest, cs 5, rest, rest, rest, cs 5, rest]
+    aq3 = addDur en [cs 5, rest, cs 5, rest, cs 5, rest, cs 5, rest]
+    aq4 = throttle 8 $ cs 5 wn
