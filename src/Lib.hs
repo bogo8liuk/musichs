@@ -42,6 +42,8 @@ module Lib
     , throttle
     , circle
     , circleThrottle
+    , negCircle
+    , negCircleThrottle
 ) where
 
 import Data.List(foldl')
@@ -222,23 +224,17 @@ insertCut n m = insert n (rest restDur) m
 -- make it effective. If the duration of a note is lesser than the sum of these
 -- pauses inside its split, then the note is not touched.
 throttle :: Int -> Music a -> Music a
-throttle n m
-    | n <= 0 = m
-    | otherwise =
-        case m of
-            (Prim (Note d p)) ->
-                if sfn * fromIntegral n >= d
-                then m
-                else
-                    let newDur = (d/fromIntegral n) - sfn in
-                    times n (Prim (Note newDur p) :+: rest sfn)
-            (Modify c m) -> Modify c $ throttle n m
-            (m1 :+: m2) -> throttle n m1 :+: throttle n m2
-            (m1 :=: m2) -> throttle n m1 :=: throttle n m2
-            _ -> m
+throttle n = _throttle n (times n)
 
+--Like `throttle`, but instead of simply repeating notes, it uses `circle`
 circleThrottle :: Int -> Music a -> Music a
-circleThrottle n m
+circleThrottle n = _throttle n (circle n)
+
+negCircleThrottle :: Int -> Music a -> Music a
+negCircleThrottle n = _throttle n (negCircle n)
+
+_throttle :: Int -> (Music a -> Music a) -> Music a -> Music a
+_throttle n f m
     | n <= 0 = m
     | otherwise =
         case m of
@@ -247,18 +243,29 @@ circleThrottle n m
                 then m
                 else
                     let newDur = (d/fromIntegral n) - sfn in
-                    circle n (Prim (Note newDur p)) :+: rest sfn
-            (Modify c m) -> Modify c $ circleThrottle n m
-            (m1 :+: m2) -> circleThrottle n m1 :+: circleThrottle n m2
-            (m1 :=: m2) -> circleThrottle n m1 :=: circleThrottle n m2
+                    f (Prim (Note newDur p) :+: rest sfn)
+            (Modify c m) -> Modify c $ _throttle n f m
+            (m1 :+: m2) -> _throttle n f m1 :+: _throttle n f m2
+            (m1 :=: m2) -> _throttle n f m1 :=: _throttle n f m2
             _ -> m
 
+--`circle n m` repeats `m` for `n` times, by transposing it incrementally until
+-- it reaches the half of `n`, then it continues to repeat it, by transposing it
+-- decrementally. For instance, for n=7 the tranpositions to be played in
+-- sequence are: 0,1,2,3,2,1,0; For n=4 the tranpositions are: 0,1,1,0.
 circle :: Int -> Music a -> Music a
-circle n m
+circle n = _circle n id
+
+--Like `circle`, but the transpositions goes negative instead of being positive.
+negCircle :: Int -> Music a -> Music a
+negCircle n = _circle n negate
+
+_circle :: Int -> (Int -> Int) -> Music a -> Music a
+_circle n f m
     | n <= 1 = m
     | n == 2 = m :+: m
     | otherwise =
-        let lvs = if even n
+        let lvs = map f $ if even n
             then [0..(half-1)] ++ reverse [0..(half-1)]
             else [0..half] ++ reverse [0..(half-1)]
         in line $ map (`transpose` m) lvs
