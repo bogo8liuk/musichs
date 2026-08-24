@@ -5,6 +5,7 @@ module SomeBeats
   , beat3_70bpm
   , beat3_92bpm
   , foliaBeat_4quarters
+  , axisProgressionMelody
   , axisProgressionBeat
 ) where
 
@@ -122,8 +123,8 @@ foliaBeat_4quarters = tempo (90/120) melody
     aq3 = addDur en [cs 5, rest, cs 5, rest, cs 5, rest, cs 5, rest]
     aq4 = throttle 8 $ cs 5 wn
 
-axisProgressionBeat :: Music Pitch
-axisProgressionBeat = instrument Lead2Sawtooth mainMelody
+axisProgressionMelody :: Music Pitch
+axisProgressionMelody = repeatM mainMelody
   where
     mainMelody = line [n1, n2, n3, n4]
 
@@ -131,3 +132,6 @@ axisProgressionBeat = instrument Lead2Sawtooth mainMelody
     n2 = addDurPar wn [g 4, d 4, b 3]
     n3 = addDurPar wn [a 4, e 4, c 4]
     n4 = addDurPar wn [a 4, f 4, c 4]
+
+axisProgressionBeat :: Music Pitch
+axisProgressionBeat = cut 16 $ parFrom 4 (cut 16 $ instrument SynthVoice axisProgressionMelody) boomBapDrums1
