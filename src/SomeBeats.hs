@@ -5,6 +5,7 @@ module SomeBeats
   , beat3_70bpm
   , beat3_92bpm
   , foliaBeat_4quarters
+  , axisProgressionBeat
 ) where
 
 import Lib
@@ -86,11 +87,11 @@ foliaBeat_4quarters = tempo (90/120) melody
       , bassMelody :=: fx8MainMel mainDefLoudness :=: cut 4 trapDrums1
       , bassMelody :=: fx8MainMel mainDefLoudness :=: silence 1 (cut 4 trapDrums1)
       , bassMelody :=: cutMainMel :=: cut 4 trapDrums1
-      , bassMelody :=: fx8MainMel mainDefLoudness :=: attachingLead2Mel SF :=: cut 4 trapDrums1
-      , throttledMainMel mainDefLoudness :=: cut 4 trapDrums1
-      , circleThrottledMainMel mainDefLoudness :=: cut 4 trapDrums1
-      , bassMelody :=: lead2MainMel mainDefLoudness :=: cut 4 trapDrums1
-      , bassMelody :=: lead2MainMel mainDefLoudness :=: cut 4 trapDrums1
+      , bassMelody :=: fx8MainMel mainDefLoudness :=: attachingLead2Mel FFF :=: cut 4 trapDrums1
+      , throttledMainMel NF :=: cut 4 trapDrums1
+      , circleThrottledMainMel NF :=: cut 4 trapDrums1
+      , bassMelody :=: lead2MainMel NF :=: cut 4 trapDrums1
+      , bassMelody :=: lead2MainMel NF :=: cut 4 trapDrums1
       ]
 
     fx8MainMel l = loud l $ instrument FX8SciFi mainMelody
@@ -120,3 +121,13 @@ foliaBeat_4quarters = tempo (90/120) melody
     aq2 = addDur en [rest, rest, cs 5, rest, rest, rest, cs 5, rest]
     aq3 = addDur en [cs 5, rest, cs 5, rest, cs 5, rest, cs 5, rest]
     aq4 = throttle 8 $ cs 5 wn
+
+axisProgressionBeat :: Music Pitch
+axisProgressionBeat = instrument Lead2Sawtooth mainMelody
+  where
+    mainMelody = line [n1, n2, n3, n4]
+
+    n1 = addDurPar wn [g 4, e 4, c 4]
+    n2 = addDurPar wn [g 4, d 4, b 3]
+    n3 = addDurPar wn [a 4, e 4, c 4]
+    n4 = addDurPar wn [a 4, f 4, c 4]
