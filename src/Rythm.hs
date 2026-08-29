@@ -11,6 +11,7 @@ module Rythm
   , trapDrums2
   , trapDrums3
   , trapDrums4
+  , trapDrums5
 ) where
 
 import Euterpea
@@ -120,3 +121,9 @@ trapDrums4 = repeatM (drums1 :+: drums2)
 
     percussion = ClosedHiHat
     snare = perc LowTom
+
+--Really simple. It can be used as a base for more complex drums
+trapDrums5 :: Music Pitch
+trapDrums5 = repeatM drums
+  where
+    drums = roll en $ perc ClosedHiHat 1
