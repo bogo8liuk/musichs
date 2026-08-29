@@ -10,6 +10,7 @@ module Rythm
   , trapDrums1
   , trapDrums2
   , trapDrums3
+  , trapDrums4
 ) where
 
 import Euterpea
@@ -107,3 +108,15 @@ trapDrums3 = repeatM drums1
     snare2 = perc ElectricSnare sn
 
     percussion = ClosedHiHat
+
+trapDrums4 :: Music Pitch
+trapDrums4 = repeatM (drums1 :+: drums2)
+  where
+    drums1 = line [hit en, times 3 enr, snare en, times 3 enr]
+    drums2 = line [times 8 $ hit tn, {-1/4-}enr, hit en, {-2/4-}snare en,
+      times 3 enr]
+
+    hit = perc percussion
+
+    percussion = ClosedHiHat
+    snare = perc LowTom
