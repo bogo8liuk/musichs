@@ -12,6 +12,8 @@ module Rythm
   , trapDrums3
   , trapDrums4
   , trapDrums5
+  , trapDrums6
+  , trapDrums7
 ) where
 
 import Euterpea
@@ -127,3 +129,26 @@ trapDrums5 :: Music Pitch
 trapDrums5 = repeatM drums
   where
     drums = roll en $ perc ClosedHiHat 1
+
+slowAccompanyingTrapDrums1 :: PercussionSound -> PercussionSound -> Music Pitch
+slowAccompanyingTrapDrums1 pFinal pMid = q1 :+: q2
+  where
+    q1 = times 7 enr :+: perc pFinal en
+    q2 = line
+      [ times 6 enr
+      , perc pMid tn
+      , perc pMid tn
+      , perc pMid tn
+      , perc pMid tn
+      , perc pFinal en
+      ]
+
+trapDrums6 :: Music Pitch
+trapDrums6 = trapDrums5 :=: snares
+  where
+    snares = repeatM $ cut bn $ slowAccompanyingTrapDrums1 LowTom ElectricSnare
+
+trapDrums7 :: Music Pitch
+trapDrums7 =  trapDrums5 :=: snares
+  where
+    snares = repeatM $ cut bn $ slowAccompanyingTrapDrums1 OpenTriangle Cowbell
