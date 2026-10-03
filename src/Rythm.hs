@@ -14,6 +14,9 @@ module Rythm
   , trapDrums5
   , trapDrums6
   , trapDrums7
+  , trapDrums8
+  , trapDrums9
+  , trapDrums10
 ) where
 
 import Euterpea
@@ -70,8 +73,8 @@ accompanyingSnare2 = repeatM drums
 
     snareHit2 = perc HiMidTom
 
-trapDrums1 :: Music Pitch
-trapDrums1 = repeatM (drums1 :+: drums2)
+baseTrapDrums :: PercussionSound -> PercussionSound -> Music Pitch
+baseTrapDrums p1 p2 = repeatM (drums1 :+: drums2)
   where
     drums1 = line [times 3 hit :=: snare1, snr, hit, snr,
       times 5 hit :=: (enr :+: snare2), snr, times 2 hit, times 4 hhit]
@@ -82,10 +85,13 @@ trapDrums1 = repeatM (drums1 :+: drums2)
     hit = perc percussion sn
     hhit = perc percussion tn
 
-    snare1 = perc LowTom sn
-    snare2 = perc ElectricSnare sn
+    snare1 = perc p1 sn
+    snare2 = perc p2 sn
 
     percussion = ClosedHiHat
+
+trapDrums1 :: Music Pitch
+trapDrums1 = baseTrapDrums LowTom ElectricSnare
 
 trapDrums2 :: Music Pitch
 trapDrums2 = repeatM drums1
@@ -152,3 +158,14 @@ trapDrums7 :: Music Pitch
 trapDrums7 =  trapDrums5 :=: snares
   where
     snares = repeatM $ cut bn $ slowAccompanyingTrapDrums1 OpenTriangle Cowbell
+
+trapDrums8 :: Music Pitch
+trapDrums8 =  trapDrums5 :=: snares
+  where
+    snares = repeatM $ cut bn $ slowAccompanyingTrapDrums1 LowBongo OpenHiConga
+
+trapDrums9 :: Music Pitch
+trapDrums9 = baseTrapDrums ChineseCymbal HandClap
+
+trapDrums10 :: Music Pitch
+trapDrums10 = baseTrapDrums Claves LowTimbale
