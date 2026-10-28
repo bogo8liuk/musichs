@@ -1,8 +1,16 @@
 module StillDRE
   ( stillDRE
+  , stillDRE120
 ) where
 
 import Lib
+import Rythm
+
+stillDRE120 :: Music Pitch
+stillDRE120 = cut 16 $ tempo (120/120) (parFrom 3 mel drums)
+  where
+    mel = cut 200 trebleMelody
+    drums = phrase [Dyn $ StdLoudness FFF] $ rest beginDur :+: boomBapDrums2
 
 stillDRE :: Music Pitch
 stillDRE = cut 16 $ tempo (93/120) (parFrom 3 melody drums)
@@ -37,18 +45,22 @@ stillDRE = cut 16 $ tempo (93/120) (parFrom 3 melody drums)
 
     drums3Hit = perc LowFloorTom
 
-    melody = cut 200 (mainMel :=: bassClefMel)
+melody :: Music Pitch
+melody = cut 200 (trebleMelody :=: bassMelody)
 
-    mainMel = rest beginDur :+: repeatM (line [times 8 note1, times 3 note2, times 5 note3])
-
+trebleMelody :: Music Pitch
+trebleMelody = rest beginDur :+: repeatM (line [times 8 note1, times 3 note2, times 5 note3])
+  where
     note1 = chord [a 5 en, e 5 en, c 5 en]
 
     note2 = chord [a 5 en, e 5 en, b 4 en]
 
     note3 = chord [g 5 en, e 5 en, b 4 en]
 
-    bassClefMel = e 2 beginDur :+: repeatM bassLoop
-
+bassMelody :: Music Pitch
+bassMelody = e 2 beginDur :+: repeatM bassLoop
+  where
     bassLoop = line [a 2 qn, qnr, qnr, b 2 qn, e 2 qn, qnr, qnr, e 2 qn]
 
-    beginDur = qn
+beginDur :: Dur
+beginDur = qn
