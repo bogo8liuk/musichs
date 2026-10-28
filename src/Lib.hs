@@ -45,6 +45,8 @@ module Lib
     , negCircle
     , negCircleThrottle
     , loud
+    , overrideAt
+    , silenceAt
 ) where
 
 import Data.List(foldl')
@@ -220,6 +222,16 @@ insertCut :: Int -> Music a -> Music a
 insertCut n m = insert n (rest restDur) m
     where
         restDur = dur m --to ensure the rest is long enough
+
+--`overrideAt d m1 m2` inserts m2 after time d over m1 (m1 doesn't play, but it
+-- continues), then m1 continues, if it didn't finish.
+overrideAt :: Dur -> Music a -> Music a -> Music a
+overrideAt d m1 m2 = line [cut d m1, m2, remove (dur m2 + d) m1]
+
+--`silenceAt d m sd` is the same of overrideAt, but it inserts a rest with
+-- duration sd
+silenceAt :: Dur -> Music a -> Dur -> Music a
+silenceAt d m sd = overrideAt d m $ rest sd
 
 --It divides notes into n parts. Between each notes, it adds a rest of 1/64 to
 -- make it effective. If the duration of a note is lesser than the sum of these
