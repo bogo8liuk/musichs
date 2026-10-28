@@ -11,6 +11,10 @@ module SomeBeats
   , pachelbelsCanonBassoMelody
   , pachelbelsCanonBeat
   , pachelbelsCanonTrebleMelody
+  , calandoSequence
+  , doubleCalandoSequence
+  , vacuiCalandoSequence
+  , startingCalandoSequence
 ) where
 
 import Lib
@@ -155,3 +159,18 @@ pachelbelsCanonTrebleMelody = repeatM mainMelody
 
 pachelbelsCanonBeat :: Music Pitch
 pachelbelsCanonBeat = parFrom 4 (cut 16 $ instrument Violin pachelbelsCanonBassoMelody) trapDrums9
+
+calandoSequence :: Music Pitch
+calandoSequence = instrument Violin $ addDur singleNoteCalandoDur [b 4, a 4, g 4, gf 4]
+
+doubleCalandoSequence :: Music Pitch
+doubleCalandoSequence = times 2 calandoSequence
+
+startingCalandoSequence :: Music Pitch
+startingCalandoSequence = cut singleNoteCalandoDur calandoSequence
+
+vacuiCalandoSequence :: Music Pitch
+vacuiCalandoSequence = silenceAt singleNoteCalandoDur calandoSequence (singleNoteCalandoDur * 2)
+
+singleNoteCalandoDur :: Dur
+singleNoteCalandoDur = hn
