@@ -7,6 +7,10 @@ module SomeBeats
   , foliaBeat_4quarters
   , axisProgressionMelody
   , axisProgressionBeat
+  , axisProgressionBeat1
+  , pachelbelsCanonBassoMelody
+  , pachelbelsCanonBeat
+  , pachelbelsCanonTrebleMelody
 ) where
 
 import Lib
@@ -135,3 +139,19 @@ axisProgressionMelody = repeatM mainMelody
 
 axisProgressionBeat :: Music Pitch
 axisProgressionBeat = cut 16 $ parFrom 4 (cut 16 $ instrument SynthVoice axisProgressionMelody) boomBapDrums1
+
+axisProgressionBeat1 :: Music Pitch
+axisProgressionBeat1 = cut 16 $ parFrom 4 (cut 16 $ instrument SynthVoice axisProgressionMelody) trapDrums1
+
+pachelbelsCanonBassoMelody :: Music Pitch
+pachelbelsCanonBassoMelody = repeatM mainMelody
+  where
+    mainMelody = addDur en [d 3, a 2, b 2, fs 2, g 2, ds 2, g 2, a 2]
+
+pachelbelsCanonTrebleMelody :: Music Pitch
+pachelbelsCanonTrebleMelody = repeatM mainMelody
+  where
+    mainMelody = addDur en [c 5, g 4, a 4, e 4, f 4, c 4, f 4, g 4]
+
+pachelbelsCanonBeat :: Music Pitch
+pachelbelsCanonBeat = parFrom 4 (cut 16 $ instrument Violin pachelbelsCanonBassoMelody) trapDrums9
