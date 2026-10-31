@@ -15,11 +15,17 @@ module SomeBeats
   , doubleCalandoSequence
   , vacuiCalandoSequence
   , startingCalandoSequence
+  , retroStartingCalandoSequence
+  , fib1
+  , fib2
+  , fib3
+  , fib4
 ) where
 
 import Lib
 import Rythm
 import Vivaldi
+import Data.Foldable (foldl')
 
 beat1 :: Music Pitch
 beat1 = cut 16 beat
@@ -172,5 +178,46 @@ startingCalandoSequence = cut singleNoteCalandoDur calandoSequence
 vacuiCalandoSequence :: Music Pitch
 vacuiCalandoSequence = silenceAt singleNoteCalandoDur calandoSequence (singleNoteCalandoDur * 2)
 
+retroStartingCalandoSequence :: Music Pitch
+retroStartingCalandoSequence = cut singleNoteCalandoDur $ retro calandoSequence
+
 singleNoteCalandoDur :: Dur
 singleNoteCalandoDur = hn
+
+-- TRANSPOSITIONS
+--TODO: move logic in Lib.hs, keep here only generated music
+
+columnTranspose :: [Int]
+columnTranspose = [-2,-1,1,2]
+
+rowTranspose :: [Int]
+rowTranspose = [-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8]
+
+transposeFib :: [Int] -> [Int] -> [Int]
+transposeFib ts = map ((\n -> grab n ts ts) . fibNumber)
+  where
+    grab n [] origL = grab n origL origL
+    grab 0 (x:_) _ = x
+    grab n (_:xs) origL = grab (n-1) xs origL
+
+    fibNumber 0 = 1
+    fibNumber 1 = 1
+    fibNumber n
+      | n < 0 = 0
+      | otherwise = fibNumber (n-1) + fibNumber (n-2)
+
+fib1 :: Music Pitch
+fib1 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+  (transposeFib rowTranspose [0..7])
+
+fib2 :: Music Pitch
+fib2 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+  (transposeFib rowTranspose $ reverse [0..7])
+
+fib3 :: Music Pitch
+fib3 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+  (transposeFib rowTranspose [9..16])
+
+fib4 :: Music Pitch
+fib4 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+  (transposeFib rowTranspose $ reverse [1,1,2,3,5,8,13,21])
