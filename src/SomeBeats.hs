@@ -20,6 +20,7 @@ module SomeBeats
   , fib2
   , fib3
   , fib4
+  , choirBeat
 ) where
 
 import Lib
@@ -153,6 +154,27 @@ axisProgressionBeat = cut 16 $ parFrom 4 (cut 16 $ instrument SynthVoice axisPro
 axisProgressionBeat1 :: Music Pitch
 axisProgressionBeat1 = cut 16 $ parFrom 4 (cut 16 $ instrument SynthVoice axisProgressionMelody) trapDrums1
 
+{-
+axisProgressionBeat2 :: Music Pitch
+axisProgressionBeat2 = melody
+  where
+    melody = line
+      [ synthMainTreble
+      , synthMainTreble
+      , synthMainTreble :=: drums
+      , synthMainTreble :=: overMelody :=: drums
+      , synthMainTreble :=: overMelody :=: drums
+      ]
+
+    overMelody = times 4 (phrase [Dyn $ StdLoudness SF] $ instrument Accordion fib3)
+
+    synthMainTreble = instrument SynthVoice mainTreble
+
+    mainTreble = cut 4 axisProgressionMelody
+
+    drums = cut 4 trapDrums1
+-}
+
 pachelbelsCanonBassoMelody :: Music Pitch
 pachelbelsCanonBassoMelody = repeatM mainMelody
   where
@@ -185,17 +207,24 @@ singleNoteCalandoDur :: Dur
 singleNoteCalandoDur = hn
 
 fib1 :: Music Pitch
-fib1 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+fib1 = remove en . fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
   (transposeFib rowTranspose [0..7])
 
 fib2 :: Music Pitch
-fib2 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+fib2 = remove en . fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
   (transposeFib rowTranspose $ reverse [0..7])
 
 fib3 :: Music Pitch
-fib3 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+fib3 = remove en . fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
   (transposeFib rowTranspose [9..16])
 
 fib4 :: Music Pitch
-fib4 = fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
+fib4 = remove en . fst $ foldl' (\(acc, m) t -> (acc :+: transpose t m, m)) (b 4 en, b 4 en)
   (transposeFib rowTranspose $ reverse [1,1,2,3,5,8,13,21])
+
+choirBeat :: Music Pitch
+choirBeat = tempo (93/120) $ cut 8 $ chord
+  [ times 8 (instrument ChoirAahs fib3)
+  , times 16 (phrase [Dyn $ StdLoudness FF] $ instrument SynthBass2 $ b 1 hn)
+  , boomBapDrums
+  ]
