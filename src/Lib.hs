@@ -47,6 +47,9 @@ module Lib
     , loud
     , overrideAt
     , silenceAt
+    , columnTranspose
+    , rowTranspose
+    , transposeFib
 ) where
 
 import Data.List(foldl')
@@ -359,6 +362,30 @@ ss ns n tr te = transpose tr $ tempo te $ simpleNotesToMusic $
     cutSelfSimilarAt n $ selfSimilar ns
 
 {------------ End of Self-similar Music --------------}
+
+
+{------------ Combinators ------------------}
+
+columnTranspose :: [Int]
+columnTranspose = [-2,-1,1,2]
+
+rowTranspose :: [Int]
+rowTranspose = [-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8]
+
+transposeFib :: [Int] -> [Int] -> [Int]
+transposeFib ts = map ((\n -> grab n ts ts) . fibNumber)
+  where
+    grab n [] origL = grab n origL origL
+    grab 0 (x:_) _ = x
+    grab n (_:xs) origL = grab (n-1) xs origL
+
+    fibNumber 0 = 1
+    fibNumber 1 = 1
+    fibNumber n
+      | n < 0 = 0
+      | otherwise = fibNumber (n-1) + fibNumber (n-2)
+
+{----------------------}
 
 playMusic :: Music Pitch -> IO ()
 playMusic = playDev 2
